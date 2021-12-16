@@ -1,73 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'dart:math';
 
 void main() {
-  runApp(const MaterialApp(home: myapp()));
+  return runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.red,
+        appBar: AppBar(
+          title: const Text('Dicee'),
+          backgroundColor: Colors.red,
+        ),
+        body: DicePage(),
+      ),
+    ),
+  );
 }
 
-class myapp extends StatelessWidget {
-  const myapp({Key? key}) : super(key: key);
+class DicePage extends StatefulWidget {
+  const DicePage({Key? key}) : super(key: key);
+
+  @override
+  _DicePageState createState() => _DicePageState();
+}
+
+class _DicePageState extends State<DicePage> {
+  int leftDiceNumber = 1;
+  int rightDiceNumber = 1;
+
+  void changeDiceFace() {
+    setState(() {
+      leftDiceNumber = Random().nextInt(6) + 1;
+      rightDiceNumber = Random().nextInt(6) + 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.teal,
-        appBar: AppBar(
-          backgroundColor: Colors.teal,
-          title: const Text("Anuj"),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                  "https://www.cleverfiles.com/howto/wp-content/uploads/2018/03/minion.jpg"),
-            ),
-            const Text(
-              "Anuj Singh",
-              style: TextStyle(
-                  fontFamily: 'Pacifico',
-                  fontSize: 30,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "FLUTTER DEVELOPER",
-              style: TextStyle(
-                  fontSize: 20,
-                  letterSpacing: 2.5,
-                  color: Colors.teal.shade100,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 20,
-              width: 200,
-              child: Divider(
-                color: Colors.teal.shade100,
+    return Center(
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: MaterialButton(
+              child: Image.asset(
+                'images/dice$leftDiceNumber.png',
               ),
+              onPressed: () {
+                changeDiceFace();
+              },
             ),
-            Card(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              color: Colors.white,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.icecream_outlined,
-                  size: 30,
-                  color: Colors.teal,
-                ),
-                title: Text(
-                  "1234567891",
-                  style: TextStyle(
-                      fontSize: 18,
-                      letterSpacing: 2.5,
-                      color: Colors.teal.shade100,
-                      fontWeight: FontWeight.bold),
-                ),
+          ),
+          //Get students to create the second die as a challenge
+          Expanded(
+            child: MaterialButton(
+              child: Image.asset(
+                'images/dice$rightDiceNumber.png',
               ),
-            )
-          ],
-        ));
+              onPressed: () {
+                changeDiceFace();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
