@@ -1,73 +1,136 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+//TODO: Step 2 - Import the rFlutter_Alert package here.
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'quiz_brain.dart';
 
-void main() {
-  runApp(const MaterialApp(home: myapp()));
-}
+QuizBrain quizBrain = QuizBrain();
 
-class myapp extends StatelessWidget {
-  const myapp({Key? key}) : super(key: key);
+void main() => runApp(Quizzler());
+
+class Quizzler extends StatelessWidget {
+  const Quizzler({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.teal,
-        appBar: AppBar(
-          backgroundColor: Colors.teal,
-          title: const Text("Anuj"),
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade900,
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: QuizPage(),
+          ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                  "https://www.cleverfiles.com/howto/wp-content/uploads/2018/03/minion.jpg"),
-            ),
-            const Text(
-              "Anuj Singh",
-              style: TextStyle(
-                  fontFamily: 'Pacifico',
-                  fontSize: 30,
+      ),
+    );
+  }
+}
+
+class QuizPage extends StatefulWidget {
+  @override
+  _QuizPageState createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
+
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getCorrectAnswer();
+
+    setState(() {
+      //On the next line, you can also use if (quizBrain.isFinished()) {}, it does the same thing.
+      if (quizBrain.isFinished() == true) {
+        Alert(
+          context: context,
+          title: 'Finished!',
+          desc: 'You\'ve reached the end of the quiz.',
+        ).show();
+
+        quizBrain.reset();
+
+        scoreKeeper = [];
+      } else {
+        if (userPickedAnswer == correctAnswer) {
+          scoreKeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+        } else {
+          scoreKeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+        quizBrain.nextQuestion();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Center(
+              child: Text(
+                quizBrain.getQuestionText(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25.0,
                   color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "FLUTTER DEVELOPER",
-              style: TextStyle(
-                  fontSize: 20,
-                  letterSpacing: 2.5,
-                  color: Colors.teal.shade100,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 20,
-              width: 200,
-              child: Divider(
-                color: Colors.teal.shade100,
-              ),
-            ),
-            Card(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              color: Colors.white,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.icecream_outlined,
-                  size: 30,
-                  color: Colors.teal,
-                ),
-                title: Text(
-                  "1234567891",
-                  style: TextStyle(
-                      fontSize: 18,
-                      letterSpacing: 2.5,
-                      color: Colors.teal.shade100,
-                      fontWeight: FontWeight.bold),
                 ),
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(15.0),
+            child: FlatButton(
+              textColor: Colors.white,
+              color: Colors.green,
+              child: Text(
+                'True',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                ),
+              ),
+              onPressed: () {
+                //The user picked true.
+                checkAnswer(true);
+              },
+            ),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(15.0),
+            child: FlatButton(
+              color: Colors.red,
+              child: Text(
+                'False',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                //The user picked false.
+                checkAnswer(false);
+              },
+            ),
+          ),
+        ),
+        Row(
+          children: scoreKeeper,
+        )
+      ],
+    );
   }
 }
